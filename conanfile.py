@@ -33,3 +33,6 @@ class SQLite3Conan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = ['sqlite3']
+        if not self.settings.os == "Windows":
+            self.cpp_info.libs.append("pthread")
+            self.cpp_info.libs.append("dl")
