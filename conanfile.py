@@ -31,6 +31,7 @@ class SQLite3Conan(ConanFile):
         self.copy("*.h", "include", "%s" % (self.ZIP_FOLDER_NAME), keep_path=False)
         self.copy(pattern="*.a", dst="lib", src="_build", keep_path=False)
         self.copy(pattern="*.lib", dst="lib", src="_build", keep_path=False)
+        self.copy(pattern="*.pdb", dst="lib", src="_build", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ['sqlite3']
