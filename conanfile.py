@@ -6,7 +6,7 @@ from conans import CMake
 class SQLite3Conan(ConanFile):
     name = "sqlite3"
     version = "3.10.2"
-    branch = "master"
+    license = "Public domain"
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
     url="http://github.com/TyRoXx/conan-sqlite3"
