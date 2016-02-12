@@ -1,6 +1,6 @@
 from conans import ConanFile
 import os, shutil
-from conans.tools import download, unzip
+from conans.tools import download, unzip, check_sha256
 from conans import CMake
 
 class SQLite3Conan(ConanFile):
@@ -16,6 +16,7 @@ class SQLite3Conan(ConanFile):
     def source(self):
         zip_name = "sqlite-amalgamation-3100200.zip"
         download("http://www.sqlite.org/2016/%s" % zip_name, zip_name)
+        check_sha256(zip_name, "b68adfb8cfd0ba5712e0ed8346929538ceb9125d6de4d15049db56201ac794f6")
         unzip(zip_name)
         os.unlink(zip_name)
 
