@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-message("libs: ${CONAN_LIBS}")
+link_directories(${CONAN_LIB_DIRS})
 
 add_executable(test test.cpp)
 set_target_properties(test PROPERTIES LINKER_LANGUAGE CXX)
