@@ -9,7 +9,6 @@ class SQLite3Conan(ConanFile):
     license = "Public domain"
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    exports = "CMakeLists.txt",
     url="http://github.com/jgsogo/conan-sqlite3"
     ZIP_FOLDER_NAME = "sqlite-amalgamation-3140100"
 
@@ -23,14 +22,12 @@ class SQLite3Conan(ConanFile):
     def build(self):
         if self.settings.os == "Linux" or self.settings.os == "Macos":
             command = 'cd {} && ./configure && make'.format(self.ZIP_FOLDER_NAME)
-            self.output.info(command)
-            self.run(command)
+        elif self.settings.os == "Windows":
+            command = 'cd {} && nmake /f makefile.msc sqlite3.c'.format(self.ZIP_FOLDER_NAME)
         else:
-            shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.ZIP_FOLDER_NAME)
-            cmake = CMake(self.settings)
-            self.run("mkdir _build")
-            self.run('cd _build && cmake ../%s %s' % (self.ZIP_FOLDER_NAME, cmake.command_line))
-            self.run("cd _build && cmake --build . %s" % cmake.build_config)
+            raise NotImplementedError("conanfile::build for settings.os {!r} not implemented".format(self.settings.os)
+        self.output.info(command)
+        self.run(command)
 
     def package(self):
         self.copy("*.h", "include", "%s" % (self.ZIP_FOLDER_NAME), keep_path=False)
