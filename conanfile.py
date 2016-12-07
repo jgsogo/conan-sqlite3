@@ -25,7 +25,7 @@ class SQLite3Conan(ConanFile):
         elif self.settings.os == "Windows":
             command = 'cd {} && nmake /f makefile.msc sqlite3.c'.format(self.ZIP_FOLDER_NAME)
         else:
-            raise NotImplementedError("conanfile::build for settings.os {!r} not implemented".format(self.settings.os)
+            raise NotImplementedError("conanfile::build for settings.os {!r} not implemented".format(self.settings.os))
         self.output.info(command)
         self.run(command)
 
