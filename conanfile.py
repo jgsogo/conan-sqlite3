@@ -21,11 +21,16 @@ class SQLite3Conan(ConanFile):
         os.unlink(zip_name)
 
     def build(self):
-        shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.ZIP_FOLDER_NAME)
-        cmake = CMake(self.settings)
-        self.run("mkdir _build")
-        self.run('cd _build && cmake ../%s %s' % (self.ZIP_FOLDER_NAME, cmake.command_line))
-        self.run("cd _build && cmake --build . %s" % cmake.build_config)
+        if self.settings.os == "Linux" or self.settings.os == "Macos":
+            command = 'cd {} && ./configure && make'.format(self.ZIP_FOLDER_NAME)
+            self.output.info(command)
+            self.run(command)
+        else:
+            shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.ZIP_FOLDER_NAME)
+            cmake = CMake(self.settings)
+            self.run("mkdir _build")
+            self.run('cd _build && cmake ../%s %s' % (self.ZIP_FOLDER_NAME, cmake.command_line))
+            self.run("cd _build && cmake --build . %s" % cmake.build_config)
 
     def package(self):
         self.copy("*.h", "include", "%s" % (self.ZIP_FOLDER_NAME), keep_path=False)
