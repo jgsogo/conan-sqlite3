@@ -25,7 +25,7 @@ class SQLite3Conan(ConanFile):
         if self.settings.os == "Linux" or self.settings.os == "Macos":
             command = 'cd {} && ./configure && make'.format(self.ZIP_FOLDER_NAME)
         elif self.settings.os == "Windows":
-            command = 'cd {} && nmake /f makefile.msc'.format(self.ZIP_FOLDER_NAME)
+            command = 'cd {} && nmake /f Makefile.msc'.format(self.ZIP_FOLDER_NAME)
         else:
             raise NotImplementedError("conanfile::build for settings.os {!r} not implemented".format(self.settings.os))
         self.output.info(command)
@@ -34,7 +34,7 @@ class SQLite3Conan(ConanFile):
     def package(self):
         self.copy("*.h", dst="include", src=self.ZIP_FOLDER_NAME)
         if self.settings.os == "Windows":
-            self.copy(pattern="*.lib", dst="lib", src=str(self.settings.build_type))
+            self.copy(pattern="*.lib", dst="lib", src=str(self.ZIP_FOLDER_NAME, self.settings.build_type))
         else:
             self.copy(pattern="*.a", dst="lib", src=os.path.join(self.ZIP_FOLDER_NAME, '.libs'))
             self.copy(pattern="*.lib", dst="lib", src=os.path.join(self.ZIP_FOLDER_NAME, '.libs'))
