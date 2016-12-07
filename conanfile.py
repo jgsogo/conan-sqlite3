@@ -10,14 +10,16 @@ class SQLite3Conan(ConanFile):
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
     url="http://github.com/jgsogo/conan-sqlite3"
-    ZIP_FOLDER_NAME = "download"
+    ZIP_FOLDER_NAME = "sqlite-autoconf-3150200"
 
     def source(self):
         zip_name = "sqlite-autoconf-3150200.tar.gz"
         download("http://www.sqlite.org/2016/%s" % zip_name, zip_name)
         #check_sha1(zip_name, "ea8c25abc33733ec3541be2affe41b804b08c5ca")
-        unzip(zip_name)
+        untargz(zip_name)
         os.unlink(zip_name)
+        if self.settings.os != "Windows":
+            self.run("chmod +x ./%s/configure" % self.FOLDER_NAME)
 
     def build(self):
         if self.settings.os == "Linux" or self.settings.os == "Macos":
