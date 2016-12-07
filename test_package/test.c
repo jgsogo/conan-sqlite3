@@ -1,6 +1,5 @@
 #include <iostream>
 #include <sqlite3.h>
-#include <string.h>
 
 int main(void)
 {

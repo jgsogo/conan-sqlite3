@@ -19,13 +19,13 @@ class SQLite3Conan(ConanFile):
         untargz(zip_name)
         os.unlink(zip_name)
         if self.settings.os != "Windows":
-            self.run("chmod +x ./%s/configure" % self.FOLDER_NAME)
+            self.run("chmod +x ./%s/configure" % self.ZIP_FOLDER_NAME)
 
     def build(self):
         if self.settings.os == "Linux" or self.settings.os == "Macos":
-            command = 'cd {} && ./configure && make sqlite3.c'.format(self.ZIP_FOLDER_NAME)
+            command = 'cd {} && ./configure && make'.format(self.ZIP_FOLDER_NAME)
         elif self.settings.os == "Windows":
-            command = 'cd {} && nmake /f makefile.msc sqlite3.c'.format(self.ZIP_FOLDER_NAME)
+            command = 'cd {} && nmake /f makefile.msc'.format(self.ZIP_FOLDER_NAME)
         else:
             raise NotImplementedError("conanfile::build for settings.os {!r} not implemented".format(self.settings.os))
         self.output.info(command)
