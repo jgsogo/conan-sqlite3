@@ -1,6 +1,6 @@
 from conans import ConanFile
 import os, shutil
-from conans.tools import download, unzip, check_sha1
+from conans.tools import download, untargz, check_sha1
 from conans import CMake
 
 class SQLite3Conan(ConanFile):
