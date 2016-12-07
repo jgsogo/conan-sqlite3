@@ -9,8 +9,8 @@ class SQLite3Conan(ConanFile):
     license = "Public domain"
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    url="http://github.com/rdeterre/conan-sqlite3"
-    exports = ["CMakeLists.txt"]
+    exports = "CMakeLists.txt",
+    url="http://github.com/jgsogo/conan-sqlite3"
     ZIP_FOLDER_NAME = "sqlite-amalgamation-3140100"
 
     def source(self):
@@ -38,3 +38,4 @@ class SQLite3Conan(ConanFile):
         if not self.settings.os == "Windows":
             self.cpp_info.libs.append("pthread")
             self.cpp_info.libs.append("dl")
+

@@ -3,5 +3,5 @@
 
 int main(void)
 {
-	return strcmp("3.10.2", sqlite3_version);
+	return strcmp("3.14.1", sqlite3_version);
 }
