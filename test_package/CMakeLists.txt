@@ -5,5 +5,6 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 CONAN_BASIC_SETUP()
 
 add_executable(test test.c)
+set_target_properties(test PROPERTIES LINKER_LANGUAGE CXX)
 include_directories(${CONAN_INCLUDE_DIRS})
 target_link_libraries(test ${CONAN_LIBS})
