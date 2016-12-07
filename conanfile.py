@@ -35,6 +35,7 @@ class SQLite3Conan(ConanFile):
         self.copy("*.h", dst="include", src=self.ZIP_FOLDER_NAME)
         if self.settings.os == "Windows":
             self.copy(pattern="*.lib", dst="lib", src=self.ZIP_FOLDER_NAME)
+            self.copy(pattern="*.dll", dst="bin", src=self.ZIP_FOLDER_NAME)
         else:
             self.copy(pattern="*.a", dst="lib", src=os.path.join(self.ZIP_FOLDER_NAME, '.libs'))
             self.copy(pattern="*.lib", dst="lib", src=os.path.join(self.ZIP_FOLDER_NAME, '.libs'))
