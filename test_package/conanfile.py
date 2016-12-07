@@ -8,7 +8,7 @@ username = os.getenv("CONAN_USERNAME", "jgsogo")
 class DefaultNameConan(ConanFile):
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    requires = "sqlite3/3.14.1@%s/%s" % (username, channel)
+    requires = "sqlite3/3.15.2@%s/%s" % (username, channel)
 
     def build(self):
         cmake = CMake(self.settings)
