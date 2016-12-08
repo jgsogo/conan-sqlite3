@@ -21,13 +21,11 @@ class SQLite3Conan(ConanFile):
         #check_sha1(zip_name, "ea8c25abc33733ec3541be2affe41b804b08c5ca")
         untargz(zip_name)
         os.unlink(zip_name)
-        if self.settings.os != "Windows":
-            self.run("chmod +x ./%s/configure" % self.ZIP_FOLDER_NAME)
 
     def build(self):
         cmake = CMake(self.settings)
         shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.ZIP_FOLDER_NAME)
-        self.run("mkdir {}".format(self._build_dir, self._build_dir))
+        self.run("mkdir {}".format(self._build_dir))
         
         command = "cd {} && cmake ../{} {}".format(self._build_dir, self.ZIP_FOLDER_NAME, cmake.command_line)
         self.output.info(command)
