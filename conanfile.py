@@ -11,7 +11,9 @@ class SQLite3Conan(ConanFile):
     generators = "cmake"
     url="http://github.com/jgsogo/conan-sqlite3"
     ZIP_FOLDER_NAME = "sqlite-autoconf-3150200"
-    exports = ["FindSQLite3.cmake", ]
+    exports = ["FindSQLite3.cmake", "CMakeLists.txt", ]
+
+    _build_dir = "build"
 
     def source(self):
         zip_name = "sqlite-autoconf-3150200.tar.gz"
@@ -23,12 +25,15 @@ class SQLite3Conan(ConanFile):
             self.run("chmod +x ./%s/configure" % self.ZIP_FOLDER_NAME)
 
     def build(self):
-        if self.settings.os == "Linux" or self.settings.os == "Macos":
-            command = 'cd {} && ./configure && make'.format(self.ZIP_FOLDER_NAME)
-        elif self.settings.os == "Windows":
-            command = 'cd {} && nmake /f Makefile.msc'.format(self.ZIP_FOLDER_NAME)
-        else:
-            raise NotImplementedError("conanfile::build for settings.os {!r} not implemented".format(self.settings.os))
+        cmake = CMake(self.settings)
+        shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.ZIP_FOLDER_NAME)
+        self.run("mkdir {}".format(self._build_dir, self._build_dir))
+        
+        command = "cd {} && cmake ../{} {}".format(self._build_dir, self.ZIP_FOLDER_NAME, cmake.command_line)
+        self.output.info(command)
+        self.run(command)
+
+        command = "cd {} && cmake --build . {}".format(self._build_dir, cmake.build_config)
         self.output.info(command)
         self.run(command)
 
@@ -36,15 +41,16 @@ class SQLite3Conan(ConanFile):
         self.copy("FindSQLite3.cmake", ".", ".")
         self.copy("*.h", dst="include", src=self.ZIP_FOLDER_NAME)
         if self.settings.os == "Windows":
-            self.copy(pattern="*.lib", dst="lib", src=self.ZIP_FOLDER_NAME)
-            self.copy(pattern="*.dll", dst="bin", src=self.ZIP_FOLDER_NAME)
+            self.copy(pattern="*.lib", dst="lib", src=self._build_dir)
+            self.copy(pattern="*.dll", dst="bin", src=self._build_dir)
         else:
-            self.copy(pattern="*.a", dst="lib", src=os.path.join(self.ZIP_FOLDER_NAME, '.libs'))
-            self.copy(pattern="*.lib", dst="lib", src=os.path.join(self.ZIP_FOLDER_NAME, '.libs'))
-            self.copy(pattern="*.pdb", dst="lib", src=self.ZIP_FOLDER_NAME)
+            self.copy(pattern="*.a", dst="lib", src=self._build_dir)
+            self.copy(pattern="*.lib", dst="lib", src=self._build_dir)
+            self.copy(pattern="*.pdb", dst="lib", src=self._build_dir)
 
     def package_info(self):
         self.cpp_info.libs = ['sqlite3']
         if not self.settings.os == "Windows":
             self.cpp_info.libs.append("pthread")
             self.cpp_info.libs.append("dl")
+
