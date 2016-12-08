@@ -11,6 +11,7 @@ class SQLite3Conan(ConanFile):
     generators = "cmake"
     url="http://github.com/jgsogo/conan-sqlite3"
     ZIP_FOLDER_NAME = "sqlite-autoconf-3150200"
+    exports = ["FindSQLite3.cmake", ]
 
     def source(self):
         zip_name = "sqlite-autoconf-3150200.tar.gz"
@@ -32,6 +33,7 @@ class SQLite3Conan(ConanFile):
         self.run(command)
 
     def package(self):
+        self.copy("FindSQLite3.cmake", ".", ".")
         self.copy("*.h", dst="include", src=self.ZIP_FOLDER_NAME)
         if self.settings.os == "Windows":
             self.copy(pattern="*.lib", dst="lib", src=self.ZIP_FOLDER_NAME)
