@@ -39,12 +39,12 @@ class SQLite3Conan(ConanFile):
         self.copy("FindSQLite3.cmake", ".", ".")
         self.copy("*.h", dst="include", src=self.ZIP_FOLDER_NAME)
         if self.settings.os == "Windows":
-            self.copy(pattern="*.lib", dst="lib", src=self._build_dir)
-            self.copy(pattern="*.dll", dst="bin", src=self._build_dir)
+            self.copy(pattern="*.lib", dst="lib", src=self._build_dir, keep_path=False)
+            self.copy(pattern="*.dll", dst="bin", src=self._build_dir, keep_path=False)
         else:
-            self.copy(pattern="*.a", dst="lib", src=self._build_dir)
-            self.copy(pattern="*.lib", dst="lib", src=self._build_dir)
-            self.copy(pattern="*.pdb", dst="lib", src=self._build_dir)
+            self.copy(pattern="*.a", dst="lib", src=self._build_dir, keep_path=False)
+            self.copy(pattern="*.lib", dst="lib", src=self._build_dir, keep_path=False)
+            self.copy(pattern="*.pdb", dst="lib", src=self._build_dir, keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ['sqlite3']
