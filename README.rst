@@ -6,7 +6,7 @@ This is a `conan.io recipe <http://conan.io>`__ for the well-known `sqlite3 <htt
 +------------------------+----------------------+
 | **master (linux/osx)** | **master (windows)** |
 +========================+======================+
-| |Build travis|        | |Build appveyor|      |
+| |Build travis|         | |Build appveyor|     |
 +------------------------+----------------------+
 
 
