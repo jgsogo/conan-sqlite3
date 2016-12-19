@@ -1,22 +1,33 @@
 from conans import ConanFile
-import os, shutil
+import os
+import shutil
+import re
+import unittest
 from conans.tools import download, untargz, check_sha1
 from conans import CMake
 
+VERSION = "3.15.2"
+
+
 class SQLite3Conan(ConanFile):
     name = "sqlite3"
-    version = "3.15.2"
+    version = VERSION
     license = "Public domain"
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    url="http://github.com/jgsogo/conan-sqlite3"
-    ZIP_FOLDER_NAME = "sqlite-autoconf-3150200"
+    url = "http://github.com/jgsogo/conan-sqlite3"
     exports = ["FindSQLite3.cmake", "CMakeLists.txt", ]
+    description = """SQLite is an in-process library that implements a self-contained, serverless,
+                     zero-configuration, transactional SQL database engine."""
 
     _build_dir = "build"
 
+    def __init__(self, *args, **kwargs):
+        self.sqlite3 = SQLite3Data(VERSION)
+        super(SQLite3Conan, self).__init__(*args, **kwargs)
+
     def source(self):
-        zip_name = "sqlite-autoconf-3150200.tar.gz"
+        zip_name = self.sqlite3.zip_name
         download("http://www.sqlite.org/2016/%s" % zip_name, zip_name)
         #check_sha1(zip_name, "ea8c25abc33733ec3541be2affe41b804b08c5ca")
         untargz(zip_name)
@@ -24,10 +35,10 @@ class SQLite3Conan(ConanFile):
 
     def build(self):
         cmake = CMake(self.settings)
-        shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.ZIP_FOLDER_NAME)
+        shutil.move("CMakeLists.txt", "%s/CMakeLists.txt" % self.sqlite3.zip_folder)
         self.run("mkdir {}".format(self._build_dir))
         
-        command = "cd {} && cmake ../{} {}".format(self._build_dir, self.ZIP_FOLDER_NAME, cmake.command_line)
+        command = "cd {} && cmake ../{} {}".format(self._build_dir, self.sqlite3.zip_folder, cmake.command_line)
         self.output.info(command)
         self.run(command)
 
@@ -37,7 +48,7 @@ class SQLite3Conan(ConanFile):
 
     def package(self):
         self.copy("FindSQLite3.cmake", ".", ".")
-        self.copy("*.h", dst="include", src=self.ZIP_FOLDER_NAME)
+        self.copy("*.h", dst="include", src=self.sqlite3.zip_folder)
         if self.settings.os == "Windows":
             self.copy(pattern="*.lib", dst="lib", src=self._build_dir, keep_path=False)
             self.copy(pattern="*.dll", dst="bin", src=self._build_dir, keep_path=False)
@@ -52,3 +63,40 @@ class SQLite3Conan(ConanFile):
             self.cpp_info.libs.append("pthread")
             self.cpp_info.libs.append("dl")
 
+
+class SQLite3Data(object):
+    version_re = re.compile("^\d+\.\d+(\.\d+)?$")
+    amalgamation = "autoconf"  # amalgamation or autoconf
+
+    def __init__(self, version):
+        assert self.version_re.match(version), "Version {!r} does not match valid pattern.".format(version)
+        self.version = version
+
+    @property
+    def version_number(self):
+        vitems = self.version.split(".")
+        ret = vitems[0]
+        for it in vitems[1:] + ["0"]*(4-len(vitems)):
+            ret += it.zfill(2)
+        return ret
+
+    @property
+    def zip_name(self):
+        return "sqlite-{amalgamation}-{version}.tar.gz".format(amalgamation=self.amalgamation, version=self.version_number)
+
+    @property
+    def zip_folder(self):
+        return self.zip_name.split(".tar.gz", 1)[0]
+
+
+class SQLite3DataTests(unittest.TestCase):
+    def test_version(self):
+        self.assertRaises(AssertionError, SQLite3Data, "3.12.3.4")
+        self.assertRaises(AssertionError, SQLite3Data, ".12.3")
+        self.assertRaises(AssertionError, SQLite3Data, "3.a.4")
+        self.assertRaises(AssertionError, SQLite3Data, "3.12.3-alpha1")
+
+    def test_version_number(self):
+        self.assertEqual("3150200", SQLite3Data("3.15.2").version_number)
+        self.assertEqual("3150000", SQLite3Data("3.15").version_number)
+        self.assertEqual("3010200", SQLite3Data("3.1.2").version_number)

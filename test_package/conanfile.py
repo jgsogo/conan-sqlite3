@@ -1,14 +1,28 @@
 from conans.model.conan_file import ConanFile
 from conans import CMake
 import os
+import re
 
 channel = os.getenv("CONAN_CHANNEL", "testing")
 username = os.getenv("CONAN_USERNAME", "jgsogo")
 
+
+def get_version():
+    # Just want to be sure that I'm always testing this version
+    cfile = os.path.join(os.path.dirname(__file__), "..", "conanfile.py")
+    version_pattern = re.compile(r'^VERSION = "(?P<version>[\d\.]+)"(\s+#.*)?$')
+    with open(cfile) as f:
+        for line in f:
+            m = version_pattern.match(line.strip())
+            if m:
+                return m.group('version')
+    raise Exception("Cannot get version from {!r}".format(cfile))
+
+
 class DefaultNameConan(ConanFile):
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    requires = "sqlite3/3.15.2@%s/%s" % (username, channel)
+    requires = "sqlite3/{version}@{username}/{channel}".format(version=get_version(), username=username, channel=channel)
 
     def build(self):
         cmake = CMake(self.settings)
@@ -20,5 +34,5 @@ class DefaultNameConan(ConanFile):
         self.copy(pattern="*.dylib", dst="bin", src="lib")
 
     def test(self):
-        self.run(".%sbin%stest " % (os.sep, os.sep))
+        self.run(os.path.join(".", "bin", "test"))
 
