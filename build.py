@@ -7,7 +7,9 @@ reference = os.getenv("CONAN_REFERENCE", "{}/{}".format(SQLite3Conan.name, SQLit
 
 
 if __name__ == "__main__":
-    builder = ConanMultiPackager(username=username, reference=reference)
+    builder = ConanMultiPackager(username=username,
+                                 reference=reference,
+                                 stable_branch_pattern="master")
     builder.add_common_builds()
     print("{} builds ahead!".format(len(builder.builds)))
     builder.run()
