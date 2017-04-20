@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    std::cout << "SQLite3 " << sqlite3_libversion() << std::endl;
+    std::cout << "SQLite3 " << sqlite3_libversion() << " succeeded!!" << std::endl;
     return 0;
 }
 

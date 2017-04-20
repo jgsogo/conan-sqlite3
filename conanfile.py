@@ -6,7 +6,8 @@ import unittest
 from conans.tools import download, untargz, check_sha1
 from conans import CMake
 
-VERSION = "3.15.2"
+VERSION = "3.18.0"
+YEAR = "2017"
 
 
 class SQLite3Conan(ConanFile):
@@ -28,7 +29,7 @@ class SQLite3Conan(ConanFile):
 
     def source(self):
         zip_name = self.sqlite3.zip_name
-        download("http://www.sqlite.org/2016/%s" % zip_name, zip_name)
+        download("http://www.sqlite.org/{}/{}".format(YEAR, zip_name), zip_name)
         #check_sha1(zip_name, "ea8c25abc33733ec3541be2affe41b804b08c5ca")
         untargz(zip_name)
         os.unlink(zip_name)
