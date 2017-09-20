@@ -1,16 +1,18 @@
-from conans import ConanFile
+
 import os
 import shutil
 import re
 import unittest
-from conans.tools import download, untargz, check_sha1
+
+from conans import ConanFile
+from conans.tools import download, untargz
 from conans import CMake
 
 VERSION = "3.18.0"
 YEAR = "2017"
 
 
-class SQLite3Conan(ConanFile):
+class ConanRecipe(ConanFile):
     name = "sqlite3"
     version = VERSION
     license = "Public domain"
@@ -25,7 +27,7 @@ class SQLite3Conan(ConanFile):
 
     def __init__(self, *args, **kwargs):
         self.sqlite3 = SQLite3Data(VERSION)
-        super(SQLite3Conan, self).__init__(*args, **kwargs)
+        super(ConanRecipe, self).__init__(*args, **kwargs)
 
     def source(self):
         zip_name = self.sqlite3.zip_name
@@ -66,7 +68,7 @@ class SQLite3Conan(ConanFile):
 
 
 class SQLite3Data(object):
-    version_re = re.compile("^\d+\.\d+(\.\d+)?$")
+    version_re = re.compile(r"^\d+\.\d+(\.\d+)?$")
     amalgamation = "autoconf"  # amalgamation or autoconf
 
     def __init__(self, version):
